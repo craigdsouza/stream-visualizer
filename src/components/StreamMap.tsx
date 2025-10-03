@@ -183,7 +183,7 @@ const StreamMap = ({ onActiveVertexChange, showTransects = true, baseMap = 'stre
           {hoveredTransect && showTransects && (
             <GeoJSON
               key={`hovered-${hoveredTransect.properties.transect_id}`}
-              data={{ type: 'FeatureCollection', features: [hoveredTransect] } as any}
+              data={{ type: 'FeatureCollection', features: [hoveredTransect] } as unknown as TransectData}
               style={() => ({ color: '#ef4444', weight: 4, opacity: 1 })}
             />
           )}

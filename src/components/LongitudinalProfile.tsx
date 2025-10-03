@@ -73,7 +73,7 @@ const LongitudinalProfile = ({ vertexId }: LongitudinalProfileProps) => {
       const yVal = usingNormalized ? (d.elevation_normalized_m as number) : (d.elevation as number);
       return `${i === 0 ? 'M' : 'L'} ${xScale(d.vertex_id)} ${yScale(yVal)}`;
     }).join(' ');
-  }, [data, minX, maxX, minY, maxY, usingNormalized]);
+  }, [data, minX, maxX, minY, maxY, usingNormalized, xScale, yScale]);
 
   // Area under longitudinal profile down to fixed baseline minY
   const areaPathD = useMemo(() => {
@@ -105,7 +105,7 @@ const LongitudinalProfile = ({ vertexId }: LongitudinalProfileProps) => {
       lines.push({ x1: x, y1: margin.top, x2: x, y2: margin.top + innerH });
     }
     return lines;
-  }, [innerW, innerH]);
+  }, [innerW, innerH, margin.left, margin.top]);
 
   const xTickValues = useMemo(() => {
     const vals: number[] = [];
@@ -120,7 +120,7 @@ const LongitudinalProfile = ({ vertexId }: LongitudinalProfileProps) => {
     const vals: number[] = [];
     for (let v = minY; v <= maxY + 1e-9; v += 2.5) vals.push(parseFloat(v.toFixed(2)));
     return vals;
-  }, []);
+  }, [minY, maxY]);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border h-[25vh]">
@@ -188,7 +188,7 @@ const LongitudinalProfile = ({ vertexId }: LongitudinalProfileProps) => {
         {vertexId !== null && (
           (() => {
             const found = data.find((d) => d.vertex_id === vertexId);
-            if (!found) return null as any;
+            if (!found) return null;
             const yVal = usingNormalized ? (found.elevation_normalized_m as number) : (found.elevation as number);
             return (
               <circle

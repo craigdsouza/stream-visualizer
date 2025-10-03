@@ -50,13 +50,7 @@ const LateralProfile = ({ vertexId }: LateralProfileProps) => {
   const xScale = (xMeters: number) => margin.left + ((xMeters - minX) / (maxX - minX)) * innerW;
   const yScale = (y: number) => margin.top + innerH - ((y - minY) / (maxY - minY)) * innerH;
 
-  const pathD = useMemo(() => {
-    if (data.length === 0) return '';
-    return data.map((d, i) => {
-      const xMeters = d.vertex_index * 2;
-      return `${i === 0 ? 'M' : 'L'} ${xScale(xMeters)} ${yScale(d.elevation)}`;
-    }).join(' ');
-  }, [data, minY, maxY]);
+  // Elevation line (not rendered, area used instead) - removed to avoid unused var
 
   // Area under elevation line down to minY baseline
   const areaPathD = useMemo(() => {
@@ -76,7 +70,7 @@ const LateralProfile = ({ vertexId }: LateralProfileProps) => {
     parts.push(`L ${firstX} ${baseY}`);
     parts.push('Z');
     return parts.join(' ');
-  }, [data, minY, maxY]);
+  }, [data, minY, maxY, xScale, yScale]);
 
   const damPathD = useMemo(() => {
     if (data.length === 0) return '';
@@ -85,16 +79,16 @@ const LateralProfile = ({ vertexId }: LateralProfileProps) => {
       const y = typeof d.dam === 'number' ? d.dam : d.elevation;
       return `${i === 0 ? 'M' : 'L'} ${xScale(xMeters)} ${yScale(y)}`;
     }).join(' ');
-  }, [data, minY, maxY]);
+  }, [data, minY, maxY, xScale, yScale]);
 
   const gridX = 8; // 0,5,10,...,40
-  const xTickValues = useMemo(() => Array.from({ length: gridX + 1 }, (_, i) => (maxX / gridX) * i), []);
+  const xTickValues = useMemo(() => Array.from({ length: gridX + 1 }, (_, i) => (maxX / gridX) * i), [gridX, maxX]);
   // Horizontal grid every 2.5 m from -20 to 20
   const yTickValues = useMemo(() => {
     const vals: number[] = [];
     for (let v = minY; v <= maxY + 1e-9; v += 2.5) vals.push(parseFloat(v.toFixed(2)));
     return vals;
-  }, []);
+  }, [minY, maxY]);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border h-[50vh]">
