@@ -30,7 +30,7 @@ function parseCsv(csv: string): Row[] {
 
 export async function GET(req: NextRequest) {
   try {
-    const filePath = path.resolve(process.cwd(), '..', 'vector', 'transect_elevations_with_dam.csv');
+    const filePath = path.resolve(process.cwd(), 'public', 'transect_elevations_with_dam.csv');
     const content = await fs.readFile(filePath, 'utf-8');
     const data = parseCsv(content);
 

@@ -2,12 +2,11 @@ import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-interface ElevationRow {
+type ElevationRow = {
   vertex_id: number;
   elevation_normalized_m?: number;
   elevation?: number;
-  [key: string]: string | number;
-}
+} & Record<string, string | number | undefined>;
 
 function parseCsv(csv: string): ElevationRow[] {
   const lines = csv.split(/\r?\n/).filter(line => line.trim().length > 0);
@@ -30,7 +29,7 @@ function parseCsv(csv: string): ElevationRow[] {
 
 export async function GET() {
   try {
-    const filePath = path.resolve(process.cwd(), '..', 'vector', 'stream_elevations.csv');
+    const filePath = path.resolve(process.cwd(), 'public', 'stream_elevations.csv');
     const content = await fs.readFile(filePath, 'utf-8');
     const data = parseCsv(content);
     return NextResponse.json({ data });
