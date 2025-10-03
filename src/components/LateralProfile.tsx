@@ -26,8 +26,9 @@ const LateralProfile = ({ vertexId }: LateralProfileProps) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json?.error || 'Failed to fetch');
         if (isMounted) setData((json.data as TransectPoint[]).sort((a,b) => a.vertex_index - b.vertex_index));
-      } catch (e: any) {
-        if (isMounted) setError(e?.message || 'Failed to fetch');
+      } catch (e) {
+        const message = e instanceof Error ? e.message : 'Failed to fetch';
+        if (isMounted) setError(message);
       }
     };
     fetchData();

@@ -33,8 +33,9 @@ export async function GET() {
     const content = await fs.readFile(filePath, 'utf-8');
     const data = parseCsv(content);
     return NextResponse.json({ data });
-  } catch (error: any) {
-    return NextResponse.json({ error: error?.message || 'Failed to read stream elevations' }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to read stream elevations';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

@@ -24,8 +24,9 @@ const LongitudinalProfile = ({ vertexId }: LongitudinalProfileProps) => {
         const json = await res.json();
         if (!res.ok) throw new Error(json?.error || 'Failed to fetch');
         if (isMounted) setData(json.data as ElevationRow[]);
-      } catch (e: any) {
-        if (isMounted) setError(e?.message || 'Failed to fetch');
+      } catch (e) {
+        const message = e instanceof Error ? e.message : 'Failed to fetch';
+        if (isMounted) setError(message);
       }
     };
     fetchData();

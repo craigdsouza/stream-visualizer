@@ -15,16 +15,18 @@ function parseCsv(csv: string): Row[] {
   const headers = lines[0].split(',').map(h => h.trim());
   return lines.slice(1).map(line => {
     const cols = line.split(',');
-    const obj: any = {};
+    const obj: Record<string, string> = {};
     headers.forEach((h, i) => { obj[h] = cols[i] !== undefined ? cols[i].trim() : ''; });
-    obj.transect_id = parseInt(obj.transect_id, 10);
-    obj.vertex_index = parseInt(obj.vertex_index, 10);
-    obj.elevation = parseFloat(obj.elevation);
+    const out: Row = {
+      transect_id: parseInt(obj.transect_id, 10),
+      vertex_index: parseInt(obj.vertex_index, 10),
+      elevation: parseFloat(obj.elevation),
+    };
     if (Object.prototype.hasOwnProperty.call(obj, 'dam')) {
       const v = parseFloat(obj.dam);
-      obj.dam = Number.isNaN(v) ? undefined : v;
+      if (!Number.isNaN(v)) out.dam = v;
     }
-    return obj as Row;
+    return out;
   });
 }
 
@@ -40,8 +42,9 @@ export async function GET(req: NextRequest) {
     const filtered = transectId !== null ? data.filter(d => d.transect_id === transectId) : data;
 
     return NextResponse.json({ data: filtered });
-  } catch (error: any) {
-    return NextResponse.json({ error: error?.message || 'Failed to read transect elevations' }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to read transect elevations';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

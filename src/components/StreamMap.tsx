@@ -95,7 +95,7 @@ const StreamMap = ({ onActiveVertexChange, showTransects = true, baseMap = 'stre
     return closest;
   };
 
-  const handleMapMouseMove = (e: any) => {
+  const handleMapMouseMove = (e: { latlng: { lat: number; lng: number } }) => {
     const { lat, lng } = e.latlng;
     const closest = findClosestTransect(lat, lng);
     const currentHoveredId = hoveredTransect?.properties.transect_id;
